@@ -1,11 +1,5 @@
-// Run tests.c by following the instructions below:
-
-// This file contains passing tests.
-
-// Run them by opening a terminal and running the following:
-// $ make -B Season-1/Level-2/tests && ./Season-1/Level-2/tests
-
 #include "code.h"
+#include <stdio.h>
 
 int main() {
     printf("Level 2 \n\n");
