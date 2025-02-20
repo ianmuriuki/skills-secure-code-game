@@ -1,7 +1,3 @@
-# Welcome to Secure Code Game Season-1/Level-3!
-
-# You know how to play by now, good luck!
-
 import os
 from flask import Flask, request
 
@@ -21,35 +17,43 @@ class TaxPayer:
         self.prof_picture = None
         self.tax_form_attachment = None
 
-    # returns the path of an optional profile picture that users can set
+    # Returns the path of an optional profile picture that users can set.
     def get_prof_picture(self, path=None):
-        # setting a profile picture is optional
+        # Setting a profile picture is optional.
         if not path:
-            pass
-
-        # defends against path traversal attacks
-        if path.startswith('/') or path.startswith('..'):
             return None
 
-        # builds path
         base_dir = os.path.dirname(os.path.abspath(__file__))
+        # Build the full path using the base directory regardless of user input.
         prof_picture_path = os.path.normpath(os.path.join(base_dir, path))
+        # Ensure that the resolved path is within the base directory.
+        if not prof_picture_path.startswith(base_dir):
+            return None
 
-        with open(prof_picture_path, 'rb') as pic:
-            picture = bytearray(pic.read())
+        try:
+            with open(prof_picture_path, 'rb') as pic:
+                picture = bytearray(pic.read())
+        except IOError:
+            return None
 
-        # assume that image is returned on screen after this
         return prof_picture_path
 
-    # returns the path of an attached tax form that every user should submit
+    # Returns the path of an attached tax form that every user should submit.
     def get_tax_form_attachment(self, path=None):
-        tax_data = None
-
         if not path:
             raise Exception("Error: Tax form is required for all users")
 
-        with open(path, 'rb') as form:
-            tax_data = bytearray(form.read())
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        # Build the full path using the base directory.
+        attachment_path = os.path.normpath(os.path.join(base_dir, path))
+        # Ensure that the resolved path is within the base directory.
+        if not attachment_path.startswith(base_dir):
+            return None
 
-        # assume that tax data is returned on screen after this
-        return path
+        try:
+            with open(attachment_path, 'rb') as form:
+                tax_data = bytearray(form.read())
+        except IOError:
+            return None
+
+        return attachment_path
